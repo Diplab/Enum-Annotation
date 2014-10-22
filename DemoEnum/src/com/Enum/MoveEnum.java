@@ -5,6 +5,7 @@ public class MoveEnum {
 	public static void main(String[] args) {
 		Action(ActionEnum.MOVE_FORWARDS);
 		//Action("asd");
+	   
 	}
 	
 	public static void Action(ActionEnum e) {
