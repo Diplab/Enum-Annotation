@@ -1,0 +1,8 @@
+package com.Enum;
+
+public enum Days {
+	SUNDAY,MONDAY,TUSEDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY;
+	
+}
+
+
