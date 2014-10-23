@@ -10,7 +10,8 @@ Thinking in Java Ch 19 &amp; Ch 20
 	+ [static imports](#static-imports)
 	+ [為enum加入method](#為enum加入method)
 	+ [使用interface進行分類組織安排](#使用interface進行分類組織安排)
-
+- [Annotation](#annotation)
+	
 
 
 
@@ -529,6 +530,220 @@ public enum ConstantSpecificMethod {
 }
 ```
 我們可以透過相對應的enum實例來搜尋並呼叫methods，這通常會被稱為"表格驅動程式碼"。
+
+
+
+## Annotation
+
+J2SE 5.0 中對 metadata 提出的功能是 Annotation，metadata 就是「資料的資料」（Data about data）。
+Annotation提供了Java不足以用來完整描述程式的資訊。Annotation允許我們儲存和程式有關的額外資訊，而此資訊的格式
+可受編譯器測試及檢驗，Annotation 對程式運行沒有影響，它的目的在對編譯器或分析工具說明程式的某些資訊
+
+
+我們可以先來看一下java.lang.Override、java.lang.Deprectated、java.lang.SuppressWarnings 這三個 J2SE 5.0 
+中標準的 Annotation 型態
+
+- @Override
+
+Override會對編譯器說明某個方法必須要是重新定義父類別中的方法，編譯器得知這項資訊後，在編譯程式時如果發現被 
+@Override 標示的方法並非重新定義父類別中的方法，也就是無法在父類別中找到該方法，就會回報錯誤。
+
+``` java
+package com.Annotation;
+
+public class DemoOverride {
+
+	@Override
+    public String ToString() {
+        return "customObject";
+    }	
+	public static void main(String[] args) {
+		
+	}
+
+}
+```
+
+
+- @Deprectated
+
+Deprectated會對編譯器說明某個方法已經不建議使用，如果有開發人員試圖使用或重新定義被@Deprecated標示的方法，編譯
+器必須提出警示訊息
+
+
+``` java
+package com.Annotation;
+
+class Something {
+	
+	@Deprecated Something getSomething() {
+		return new Something();
+	}
+	
+}
+
+public class DemoDeprecated {
+
+	public static void main(String[] args) {
+		Something some = new Something();
+		
+		some.getSomething();
+	}
+
+}
+```
+
+
+- @SuppressWarnings
+
+SuppressWarnings會對編譯器說明某個方法中若有警示訊息，則加以抑制，不用在編譯完成後出現警訊對編譯器說明某個方法
+中若有警示訊息，則加以抑制，不用在編譯完成後出現警訊
+
+``` java
+package com.Annotation;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class DemoSupressWarnings {
+	
+	//@SuppressWarnings(value={"unchecked"})
+	 public void doSomething() {
+	        Map map = new HashMap();
+	        map.put("some", "thing");
+	    }
+}
+```
+
+
+###  自訂Annotation
+
+我們可以自訂我們需要的Annotation 型態，將資訊提供資訊給我們的程式碼分析工具。
+
+定義的方法有點類似介面不過我們使用的是"@interface"
+
+``` java
+package com.Annotation;
+
+public @interface MakeAnnotation {
+	
+	
+}
+```
+當我們使用 @interface 自行定義 Annotation 型態時，實際上是自動繼承了 java.lang.annotation.Annotation 
+介面，並由編譯器自動為您完成其它產生的細節，我們可以為Annotation定義它的內部成員，用處會在稍後介紹
+
+可以用:
+- String 
+- enum 
+- 基礎型別(int float boolean)
+- class
+- Annotation
+- 上述型別的陣列
+- 
+``` java
+package com.Annotation;
+
+public @interface Process {
+	public enum Current {NONE, REQUIRE, ANALYSIS, DESIGN, SYSTEM};
+
+    Current current() default Current.NONE;
+    String tester();
+    String value() default "noMethod";
+    boolean ok();
+}
+```
+要注意的是元素皆必須要有它的預設值，或是使用Annotation中的class提供其值，另外非基本型別的元素不能為null值。
+
+
+###超標註 meta-annotation
+
+用來對標註做標註，一共有四種。
+
+1. @Retention  告知編譯器如何處理 annotaion 
+
+指示編譯器該如何對待您的自定義的 Annotation 型態，預設上編譯器會將 Annotation 資訊留在 .class 
+檔案中，但不被虛擬機器讀取，而僅用於編譯器或工具程式運行時提供資訊。
+
+在使用 Retention 型態時，需要提供 java.lang.annotation.RetentionPolicy 的列舉型態，RetentionPolicy 的定義如下所示：
+
+```java
+public enum RetentionPolicy {
+    SOURCE, // 編譯器處理完Annotation資訊後就沒事了
+    CLASS,  // 編譯器將Annotation儲存於class檔中，預設
+    RUNTIME // 編譯器將Annotation儲存於class檔中，可由VM讀入
+}
+```
+
+2. @Target  限定 annotation 使用對象
+
+
+在定義 Annotation 型態時，您使用 java.lang.annotation.Target 可以定義其適用之時機，在定義時要指定 
+java.lang.annotation.ElementType 的列舉值之一：
+
+``` java
+public enum ElementType {
+     TYPE, // 適用 class, interface, enum
+     FIELD, // 適用 field
+     METHOD, // 適用 method
+     PARAMETER, // 適用 method 上之 parameter
+     CONSTRUCTOR, // 適用 constructor
+     LOCAL_VARIABLE, // 適用區域變數
+     ANNOTATION_TYPE, // 適用 annotation 型態
+     PACKAGE // 適用 package
+}
+```
+``` java
+package com.Annotation;
+import java.lang.annotation.Target;
+import java.lang.annotation.ElementType;
+
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface MethodAnnotation {
+
+}
+```
+``` java
+package com.Annotation;
+
+@MethodAnnotation
+public class DoSomething {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
+```
+
+3. @Documented  要求為 API 文件的一部份
+
+在製作 Java Doc 文件時，預設上並不會將 Annotation 的資料加入到文件中，
+Annotation 用於標示程式碼以便分析工具使用相關資訊，有時 Annotation 包括了重要的訊息，我們也許會想要在使用者製作
+Java Doc 文件的同時，也一併將 Annotation 的訊息加入至 API 文件中，所以在定義 Annotation 型態時，我們可以使用
+java.lang.annotation.Documented
+
+4. @Inherited  子類是否繼承父類的 annotation
+
+我們所定義的 Annotation 型態，預設上父類別中的 Annotation 並不會被繼承至子類別中，我們可以在定義 Annotation
+型態時加上 java.lang.annotation.Inherited 型態的 Annotation，這讓我們定義的 Annotation
+型態在被繼承後仍可以保留至子類別中。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
