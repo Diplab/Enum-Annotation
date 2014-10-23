@@ -660,7 +660,7 @@ public @interface Process {
 
 用來對標註做標註，一共有四種。
 
-1. @Retention  告知編譯器如何處理 annotaion 
+1.@Retention  告知編譯器如何處理 annotaion 
 
 指示編譯器該如何對待您的自定義的 Annotation 型態，預設上編譯器會將 Annotation 資訊留在 .class 
 檔案中，但不被虛擬機器讀取，而僅用於編譯器或工具程式運行時提供資訊。
@@ -675,7 +675,7 @@ public enum RetentionPolicy {
 }
 ```
 
-2. @Target  限定 annotation 使用對象
+2.@Target  限定 annotation 使用對象
 
 
 在定義 Annotation 型態時，您使用 java.lang.annotation.Target 可以定義其適用之時機，在定義時要指定 
@@ -717,14 +717,14 @@ public class DoSomething {
 }
 ```
 
-3. @Documented  要求為 API 文件的一部份
+3.@Documented  要求為 API 文件的一部份
 
 在製作 Java Doc 文件時，預設上並不會將 Annotation 的資料加入到文件中，
 Annotation 用於標示程式碼以便分析工具使用相關資訊，有時 Annotation 包括了重要的訊息，我們也許會想要在使用者製作
 Java Doc 文件的同時，也一併將 Annotation 的訊息加入至 API 文件中，所以在定義 Annotation 型態時，我們可以使用
 java.lang.annotation.Documented
 
-4. @Inherited  子類是否繼承父類的 annotation
+4.@Inherited  子類是否繼承父類的 annotation
 
 我們所定義的 Annotation 型態，預設上父類別中的 Annotation 並不會被繼承至子類別中，我們可以在定義 Annotation
 型態時加上 java.lang.annotation.Inherited 型態的 Annotation，這讓我們定義的 Annotation
