@@ -11,6 +11,9 @@ Thinking in Java Ch 19 &amp; Ch 20
 	+ [為enum加入method](#為enum加入method)
 	+ [使用interface進行分類組織安排](#使用interface進行分類組織安排)
 - [Annotation](#annotation)
+	+ [自訂Annotation](自訂annotation)
+	+ [超標註 meta-annotation](超標註-meta-annotation)
+
 	
 
 
